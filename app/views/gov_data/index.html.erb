@@ -1,0 +1,42 @@
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand pull-left" href="/">
+        <%= image_tag "logo.png", height: 40, id: "navIcon" %>
+      </a>
+      <div class='pull-right'>
+        <h4 id="padding-please">GovTracker</h4>
+      </div>
+    </div>
+  </div>
+</nav>
+<body>
+<div class="container">
+  <div id = "ziprow" class="row search">
+    <div class="col-sm-2 col-sm-offset-5">
+      <form role="form">
+        <div class="input-group">
+          <input type="text" class="form-control input-sm" id='zipSearchBox' placeholder="Enter ZipCode">
+          <span class="input-group-btn">
+            <button id="zipButton"class="btn btn-default btn-sm" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+          </span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- <div class = "row"> -->
+    <div id="legisNames" class= "col-sm-2">
+
+    </div>
+
+    <div id= "legisInfoBox" class="col-sm-10">
+
+    </div>
+
+  </div>
+  <div id="piechart" style="height: 400px; width: 600px; margin: 0 auto"></div>
+
+<!-- </div> -->
+
+</body>
