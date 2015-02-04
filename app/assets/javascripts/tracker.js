@@ -112,7 +112,7 @@ function graphIt(orgArr, totalArr) {
 		highlight: "#FF3385",
 		label: orgArr[9]
 	}];
-	$('#rightPanelChart').append('<canvas id="chart" width="400" height="400"></canvas>')
+	$('#rightPanelChart').append('<canvas id="chart" width="300" height="300"></canvas>')
 	ctx = $("#chart").get(0).getContext("2d");
 	myNewChart = new Chart(ctx).Pie(data, options);
 };
@@ -124,15 +124,28 @@ function fetchLegislators(event){
 	"https://congress.api.sunlightfoundation.com/legislators/locate?zip=" +
 	zipCode + "&apikey=3c471d6192564914bfe7c7c5f5fa9242"
 	$("#legisNames").empty();
+	$("#billInfoBox").empty();
 	$('#legisInfoBox').empty();
 	$('#legisInfoBox').removeClass("well");
+	$('#billInfoBox').removeClass('well');
 	$.ajax(url, {
 		dataType: 'json'
 	}).done(function(data) {
+		$('#legisNames').append('<div id = "Congress"></div>')
+		$('#legisNames').append('<div id = "Senate"></div>')
+		$('#Congress').append('<h4>Congress</h4>');
+		$('#Senate').append('<h4>Senate</h4>');
 		for (var i = 0; i < data["results"].length; i++) {
-			$('#legisNames').append("<p data-bioid =" + '"' + data["results"][i].bioguide_id +
-			'"' + ">" + data["results"][i].first_name + " " + data["results"][i]
-			.last_name + "</p>")
+			if (data["results"][i].chamber == "house") {
+				$('#Congress').append("<p data-bioid =" + '"' + data["results"][i].bioguide_id +
+				'"' + ">" + data["results"][i].first_name + " " + data["results"][i]
+				.last_name + "</p>")
+			}
+			else{
+				$('#Senate').append("<p data-bioid =" + '"' + data["results"][i].bioguide_id +
+				'"' + ">" + data["results"][i].first_name + " " + data["results"][i]
+				.last_name + "</p>")
+			}
 		}
 	});
 }
@@ -146,12 +159,14 @@ function legislatorWasClicked(event){
 		dataType: 'json'
 	}).done(function(data) {
 		$('#legisInfoBox').empty()
+		$('#billInfoBox').empty()
 		data.legisBioId = legisBioId
-		addWell(data)
+		addWells(data)
 	})
 }
 
-	function addWell(data) {
+	function addWells(data) {
+		//LegisInfoBox creation
 		$('#legisInfoBox').removeClass("well").addClass("well");
 		$('#legisInfoBox').append("<div id= leftPanelInfo class='col-md-6'></div>")
 		$('#legisInfoBox').append("<div id= rightPanelChart class='col-md-6'></div>")
@@ -168,11 +183,31 @@ function legislatorWasClicked(event){
 		}
 		crpId = data["results"][0].crp_id
 		$('#leftPanelInfo').append('<p>' + data["results"][0].phone + '</p>')
-		$('#leftPanelInfo').append('<p>Twitter: @' + data["results"][0].twitter_id +
-		'</p>')
+		$('#leftPanelInfo').append('<p>Twitter: <a href="http://www.twitter.com/' + data["results"][0].twitter_id + '">@' + data["results"][0].twitter_id + '</a></p>')
 		$('#heading').append(' (' + data["results"][0].party + ')')
 		$('#leftPanelInfo').append('<p><img src="assets/' + data["legisBioId"] +
 		'.jpg"></p>')
+		$('#rightPanelChart').append('<h4 id= chartHeader>Campaign Donations</h4>')
 
+		//billInfoBox Creation
+		$('#billInfoBox').removeClass("well").addClass("well");
+		$('#billInfoBox').append('<h4>Sponsored Bills</h4>')
+		var bioGuideId= data["results"][0].bioguide_id
+		var	billInfoUrl = "https://congress.api.sunlightfoundation.com/bills/search?sponsor_id="+bioGuideId+"&apikey=3c471d6192564914bfe7c7c5f5fa9242"
+		$.ajax(billInfoUrl, {
+			dataType: 'json'
+		}).done(function(data) {
+			for(var i=0; i < 20; i++){
+			if(data["results"][i].short_title == null){
+				$('#billInfoBox').append('<p>'+ data["results"][i].official_title + '</p>')
+				$('#billInfoBox').append('<p><a href="'+ data["results"][i]["last_version"]['urls'].pdf + '">View PDF</a></p>')
+			}
+			else{
+				$('#billInfoBox').append('<p>'+ data["results"][i].short_title + '</p>')
+				$('#billInfoBox').append('<p><a href="'+ data["results"][i]["last_version"]['urls'].pdf + '">View PDF</a></p>')
+			}
+			console.log(data["results"][0])
+			}
+		});
 		passId(crpId)
 	}
