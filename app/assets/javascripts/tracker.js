@@ -1,108 +1,180 @@
+$(document).ready(function() {
+	$('form').submit(function(event) {
+		event.preventDefault();
+		var zipCode = $("#zipSearchBox").val();
+		var url =
+			"https://congress.api.sunlightfoundation.com/legislators/locate?zip=" +
+			zipCode + "&apikey=3c471d6192564914bfe7c7c5f5fa9242"
+		$("#legisNames").empty();
+		$('#legisInfoBox').empty();
+		$('#legisInfoBox').removeClass("well");
+		$.ajax(url, {
+			dataType: 'json'
+		}).done(function(data) {
+			for (var i = 0; i < data["results"].length; i++) {
+				$('#legisNames').append("<p data-bioid =" + '"' + data["results"][i].bioguide_id +
+					'"' + ">" + data["results"][i].first_name + " " + data["results"][i]
+					.last_name + "</p>")
+			}
+		});
+
+		$('#legisNames').on('click', 'p', function() {
+			var legisBioId = $(this).data("bioid")
+			var legisInfoUrl =
+				"https://congress.api.sunlightfoundation.com/legislators?bioguide_id=" +
+				legisBioId + "&apikey=3c471d6192564914bfe7c7c5f5fa9242"
+			$.ajax(legisInfoUrl, {
+				dataType: 'json'
+			}).done(function(data) {
+				$('#legisInfoBox').empty()
+				$('#chartcontainer').empty()
+				$('#chartcontainer').append(
+					'<canvas id="chart" width="600" height="400"></canvas>')
+				addWell(data)
+			});
 
 
-$(document).ready(function(){
-  $('form').submit(function(event){
-    event.preventDefault();
-    var zipCode = $("#zipSearchBox").val();
-    var url = "https://congress.api.sunlightfoundation.com/legislators/locate?zip="+ zipCode +"&apikey=3c471d6192564914bfe7c7c5f5fa9242"
-    $("#legisNames").empty();
-    $('#legisInfoBox').empty();
-    $('#legisInfoBox').removeClass( "well" );
-    $.ajax(url, {dataType: 'json'}).done(function(data){
-      for(var i = 0; i < data["results"].length; i++){
-        $('#legisNames').append("<p data-bioid ="+'"'+ data["results"][i].bioguide_id +'"'+">"+ data["results"][i].first_name + " " + data["results"][i].last_name + "</p>")
-      }
-    })
-  })
-  $('#legisNames').on('click', 'p', function(){
-    var legisBioId = $(this).data("bioid")
-    var legisInfoUrl = "https://congress.api.sunlightfoundation.com/legislators?bioguide_id="+legisBioId+"&apikey=3c471d6192564914bfe7c7c5f5fa9242"
-    $.ajax(legisInfoUrl, {dataType: 'json'}).done(function(data){
-      $('#legisInfoBox').empty()
-      $('#legisInfoBox').removeClass( "well" ).addClass( "well" );
-      $('#legisInfoBox').append('<h4 id=' + "'heading'>" + data["results"][0].first_name +" "+ data["results"][0].last_name +'</h4>')
-      if(data["results"][0].chamber == "house"){
-        if(data["results"][0].gender == "M"){
-        $('#heading').prepend('Congressman ')
-        }
-        else{
-        $('#heading').prepend('Congresswoman ')
-        }
-      }
-      else{
-        $('#heading').prepend('Senator ')
-      }
-      //  crpId = data["results"][0].crp_id
-      $('#legisInfoBox').append('<p>' + data["results"][0].phone + '</p>')
-      $('#legisInfoBox').append('<p>Twitter: @' + data["results"][0].twitter_id + '</p>')
-      $('#heading').append(' (' + data["results"][0].party + ')')
-      $('#legisInfoBox').append('<p><img src="assets/' + legisBioId + '.jpg"></p>')
-    })
-  })
 
-  $(function() {var openUrl = 'http://www.opensecrets.org/api/?method=candContrib&cid=' + crpID + '&cycle=2012&apikey=ac798a3dca773c3f5c3b054f448b5d5b'
+			function addWell(data) {
+				$('#legisInfoBox').removeClass("well").addClass("well");
+				$('#legisInfoBox').append('<h4 id=' + "'heading'>" + data["results"]
+					[0].first_name + " " + data["results"][0].last_name + '</h4>')
+				if (data["results"][0].chamber == "house") {
+					if (data["results"][0].gender == "M") {
+						$('#heading').prepend('Congressman ')
+					} else {
+						$('#heading').prepend('Congresswoman ')
+					}
+				} else {
+					$('#heading').prepend('Senator ')
+				}
+				appendP(data)
+			}
 
-    $.ajax(openUrl, {dataType: 'xml'}).done(function(data){
+			function appendP(data) {
+				crpId = data["results"][0].crp_id
+				$('#legisInfoBox').append('<p>' + data["results"][0].phone + '</p>')
+				$('#legisInfoBox').append('<p>Twitter: @' + data["results"][0].twitter_id +
+					'</p>')
+				$('#heading').append(' (' + data["results"][0].party + ')')
+				$('#legisInfoBox').append('<p><img src="assets/' + legisBioId +
+					'.jpg"></p>')
 
-      // Make monochrome colors and set them as default for all pies
-      Highcharts.getOptions().plotOptions.pie.colors = (function () {
-        var colors = [],
-        base = Highcharts.getOptions().colors[0],
-        i;
+				passId(crpId)
+			}
+		})
+	})
+})
 
-        for (i = 0; i < 10; i += 1) {
-          // Start out with a darkened base color (negative brighten), and end
-          // up with a much brighter color
-          colors.push(Highcharts.Color(base).brighten((i - 3) / 7).get());
-        }
-        return colors;
-      });
+function passId(crpId) {
+	var openUrl = 'https://www.opensecrets.org/api/?method=candContrib&cid=' +
+		crpId + '&cycle=2012&apikey=dfc23d11b88b4782522cc2cd23c443b6&output=json'
+	$.ajax('/api_call', {
+		data: {
+			api_url: openUrl
+		},
+		dataType: 'json',
+	}).done(function(data) {
+		var orgArr = [];
+		var totalArr = [];
+		for (var i = 0; i < 10; i++) {
+			orgArr.push(data["response"]["contributors"]["contributor"][i][
+				"@attributes"
+			].org_name)
+			totalArr.push(parseInt(data["response"]["contributors"][
+				"contributor"
+			][i][
+				"@attributes"
+			].total))
+		}
+		graphIt(orgArr, totalArr)
+	})
+}
 
-      // Build the chart
-      $('#piechart').attr('id', 'legisInfoBox').highcharts({
-        chart: {
-          plotBackgroundColor: null,
-          plotBorderWidth: null,
-          plotShadow: false
-        },
-        title: {
-          text: 'Browser market shares at a specific website, 2014'
-        },
-        tooltip: {
-          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-          pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-              enabled: true,
-              format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-              style: {
-                color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-              }
-            }
-          }
-        },
-        series: [{
-          type: 'pie',
-          name: 'Browser share',
-          data: [
-          ['Firefox',   45.0],
-          ['IE',       26.8],
-        {
-          name: 'Chrome',
-          y: 12.8,
-          sliced: true,
-          selected: true
-        },
-        ['Safari',    8.5],
-        ['Opera',     6.2],
-        ['Others',   0.7]
-        ]
-      }]
-    });
-  });
- })
+function graphIt(orgArr, totalArr) {
+	console.log(orgArr)
+	options = {
+		//Boolean - Show a backdrop to the scale label
+		scaleShowLabelBackdrop: true,
+		//String - The colour of the label backdrop
+		scaleBackdropColor: "rgba(255,255,255,0.75)",
+		// Boolean - Whether the scale should begin at zero
+		scaleBeginAtZero: true,
+		//Number - The backdrop padding above & below the label in pixels
+		scaleBackdropPaddingY: 2,
+		//Number - The backdrop padding to the side of the label in pixels
+		scaleBackdropPaddingX: 2,
+		//Boolean - Show line for each value in the scale
+		scaleShowLine: true,
+		//Boolean - Stroke a line around each segment in the chart
+		segmentShowStroke: true,
+		//String - The colour of the stroke on each segement.
+		segmentStrokeColor: "#fff",
+		//Number - The width of the stroke value in pixels
+		segmentStrokeWidth: 2,
+		//Number - Amount of animation steps
+		animationSteps: 100,
+		//String - Animation easing effect.
+		animationEasing: "easeOutBounce",
+		//Boolean - Whether to animate the rotation of the chart
+		animateRotate: true,
+		//Boolean - Whether to animate scaling the chart from the centre
+		animateScale: false,
+		//String - A legend template
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
 
-});
+	};
+	data = [{
+		value: totalArr[0],
+		color: "#F7464A",
+		highlight: "#FF5A5E",
+		label: orgArr[0]
+	}, {
+		value: totalArr[1],
+		color: "#46BFBD",
+		highlight: "#5AD3D1",
+		label: orgArr[1]
+	}, {
+		value: totalArr[2],
+		color: "#FDB45C",
+		highlight: "#FFC870",
+		label: orgArr[2]
+	}, {
+		value: totalArr[3],
+		color: "#FFA3FF",
+		highlight: "#FFB5FF",
+		label: orgArr[3]
+	}, {
+		value: totalArr[4],
+		color: "#A3D1FF",
+		highlight: "#BFDFFF",
+		label: orgArr[4]
+	}, {
+		value: totalArr[5],
+		color: "#A3FFA3",
+		highlight: "#ADFFAD",
+		label: orgArr[5]
+	}, {
+		value: totalArr[6],
+		color: "#FF85AD",
+		highlight: "#FFA3C2",
+		label: orgArr[6]
+	}, {
+		value: totalArr[7],
+		color: "#FFCC66",
+		highlight: "#FFD175",
+		label: orgArr[7]
+	}, {
+		value: totalArr[8],
+		color: "#47A3FF",
+		highlight: "#70B8FF",
+		label: orgArr[8]
+	}, {
+		value: totalArr[9],
+		color: "#FF1975",
+		highlight: "#FF3385",
+		label: orgArr[9]
+	}];
+	ctx = $("#chart").get(0).getContext("2d");
+	myNewChart = new Chart(ctx).Pie(data, options);
+};

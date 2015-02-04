@@ -2,6 +2,8 @@ Rails.application.routes.draw do
 
   root 'gov_data#index'
 
+  get '/api_call' => 'gov_data#api_call'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

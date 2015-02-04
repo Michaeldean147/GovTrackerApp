@@ -17,4 +17,3 @@
 //= require bootstrap-sprockets
 //= require tracker.js
 //= require Chart
-//= require excanvas
