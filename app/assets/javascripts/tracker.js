@@ -1,74 +1,12 @@
+
 $(document).ready(function() {
-	$('form').submit(function(event) {
-		event.preventDefault();
-		var zipCode = $("#zipSearchBox").val();
-		var url =
-			"https://congress.api.sunlightfoundation.com/legislators/locate?zip=" +
-			zipCode + "&apikey=3c471d6192564914bfe7c7c5f5fa9242"
-		$("#legisNames").empty();
-		$('#legisInfoBox').empty();
-		$('#legisInfoBox').removeClass("well");
-		$.ajax(url, {
-			dataType: 'json'
-		}).done(function(data) {
-			for (var i = 0; i < data["results"].length; i++) {
-				$('#legisNames').append("<p data-bioid =" + '"' + data["results"][i].bioguide_id +
-					'"' + ">" + data["results"][i].first_name + " " + data["results"][i]
-					.last_name + "</p>")
-			}
-		});
-
-		$('#legisNames').on('click', 'p', function() {
-			var legisBioId = $(this).data("bioid")
-			var legisInfoUrl =
-				"https://congress.api.sunlightfoundation.com/legislators?bioguide_id=" +
-				legisBioId + "&apikey=3c471d6192564914bfe7c7c5f5fa9242"
-			$.ajax(legisInfoUrl, {
-				dataType: 'json'
-			}).done(function(data) {
-				$('#legisInfoBox').empty()
-				$('#chartcontainer').empty()
-				$('#chartcontainer').append(
-					'<canvas id="chart" width="600" height="400"></canvas>')
-				addWell(data)
-			});
-
-
-
-			function addWell(data) {
-				$('#legisInfoBox').removeClass("well").addClass("well");
-				$('#legisInfoBox').append('<h4 id=' + "'heading'>" + data["results"]
-					[0].first_name + " " + data["results"][0].last_name + '</h4>')
-				if (data["results"][0].chamber == "house") {
-					if (data["results"][0].gender == "M") {
-						$('#heading').prepend('Congressman ')
-					} else {
-						$('#heading').prepend('Congresswoman ')
-					}
-				} else {
-					$('#heading').prepend('Senator ')
-				}
-				appendP(data)
-			}
-
-			function appendP(data) {
-				crpId = data["results"][0].crp_id
-				$('#legisInfoBox').append('<p>' + data["results"][0].phone + '</p>')
-				$('#legisInfoBox').append('<p>Twitter: @' + data["results"][0].twitter_id +
-					'</p>')
-				$('#heading').append(' (' + data["results"][0].party + ')')
-				$('#legisInfoBox').append('<p><img src="assets/' + legisBioId +
-					'.jpg"></p>')
-
-				passId(crpId)
-			}
-		})
-	})
+	$('form').submit(fetchLegislators);
+	$('#legisNames').on('click', 'p', legislatorWasClicked);
 })
 
 function passId(crpId) {
 	var openUrl = 'https://www.opensecrets.org/api/?method=candContrib&cid=' +
-		crpId + '&cycle=2012&apikey=dfc23d11b88b4782522cc2cd23c443b6&output=json'
+	crpId + '&cycle=2012&apikey=dfc23d11b88b4782522cc2cd23c443b6&output=json'
 	$.ajax('/api_call', {
 		data: {
 			api_url: openUrl
@@ -79,12 +17,12 @@ function passId(crpId) {
 		var totalArr = [];
 		for (var i = 0; i < 10; i++) {
 			orgArr.push(data["response"]["contributors"]["contributor"][i][
-				"@attributes"
+			"@attributes"
 			].org_name)
 			totalArr.push(parseInt(data["response"]["contributors"][
-				"contributor"
+			"contributor"
 			][i][
-				"@attributes"
+			"@attributes"
 			].total))
 		}
 		graphIt(orgArr, totalArr)
@@ -92,7 +30,6 @@ function passId(crpId) {
 }
 
 function graphIt(orgArr, totalArr) {
-	console.log(orgArr)
 	options = {
 		//Boolean - Show a backdrop to the scale label
 		scaleShowLabelBackdrop: true,
@@ -175,6 +112,67 @@ function graphIt(orgArr, totalArr) {
 		highlight: "#FF3385",
 		label: orgArr[9]
 	}];
+	$('#rightPanelChart').append('<canvas id="chart" width="400" height="400"></canvas>')
 	ctx = $("#chart").get(0).getContext("2d");
 	myNewChart = new Chart(ctx).Pie(data, options);
 };
+
+function fetchLegislators(event){
+	event.preventDefault();
+	var zipCode = $("#zipSearchBox").val();
+	var url =
+	"https://congress.api.sunlightfoundation.com/legislators/locate?zip=" +
+	zipCode + "&apikey=3c471d6192564914bfe7c7c5f5fa9242"
+	$("#legisNames").empty();
+	$('#legisInfoBox').empty();
+	$('#legisInfoBox').removeClass("well");
+	$.ajax(url, {
+		dataType: 'json'
+	}).done(function(data) {
+		for (var i = 0; i < data["results"].length; i++) {
+			$('#legisNames').append("<p data-bioid =" + '"' + data["results"][i].bioguide_id +
+			'"' + ">" + data["results"][i].first_name + " " + data["results"][i]
+			.last_name + "</p>")
+		}
+	});
+}
+
+function legislatorWasClicked(event){
+	var legisBioId = $(this).data("bioid")
+	var legisInfoUrl =
+	"https://congress.api.sunlightfoundation.com/legislators?bioguide_id=" +
+	legisBioId + "&apikey=3c471d6192564914bfe7c7c5f5fa9242"
+	$.ajax(legisInfoUrl, {
+		dataType: 'json'
+	}).done(function(data) {
+		$('#legisInfoBox').empty()
+		data.legisBioId = legisBioId
+		addWell(data)
+	})
+}
+
+	function addWell(data) {
+		$('#legisInfoBox').removeClass("well").addClass("well");
+		$('#legisInfoBox').append("<div id= leftPanelInfo class='col-md-6'></div>")
+		$('#legisInfoBox').append("<div id= rightPanelChart class='col-md-6'></div>")
+		$('#leftPanelInfo').append('<h4 id= heading>' + data["results"]
+		[0].first_name + " " + data["results"][0].last_name + '</h4>')
+		if (data["results"][0].chamber == "house") {
+			if (data["results"][0].gender == "M") {
+				$('#heading').prepend('Congressman ')
+			} else {
+				$('#heading').prepend('Congresswoman ')
+			}
+		} else {
+			$('#heading').prepend('Senator ')
+		}
+		crpId = data["results"][0].crp_id
+		$('#leftPanelInfo').append('<p>' + data["results"][0].phone + '</p>')
+		$('#leftPanelInfo').append('<p>Twitter: @' + data["results"][0].twitter_id +
+		'</p>')
+		$('#heading').append(' (' + data["results"][0].party + ')')
+		$('#leftPanelInfo').append('<p><img src="assets/' + data["legisBioId"] +
+		'.jpg"></p>')
+
+		passId(crpId)
+	}
