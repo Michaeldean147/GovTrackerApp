@@ -182,12 +182,12 @@ function legislatorWasClicked(event){
 			$('#heading').prepend('Senator ')
 		}
 		crpId = data["results"][0].crp_id
-		$('#leftPanelInfo').append('<p>' + data["results"][0].phone + '</p>')
+		$('#leftPanelInfo').append('<p>Phone Number: ' + data["results"][0].phone + '</p>')
 		$('#leftPanelInfo').append('<p>Twitter: <a href="http://www.twitter.com/' + data["results"][0].twitter_id + '">@' + data["results"][0].twitter_id + '</a></p>')
 		$('#heading').append(' (' + data["results"][0].party + ')')
 		$('#leftPanelInfo').append('<p><img src="assets/' + data["legisBioId"] +
 		'.jpg"></p>')
-		$('#rightPanelChart').append('<h4 id= chartHeader>Campaign Donations</h4>')
+		$('#rightPanelChart').append('<h4 id= chartHeader>2012-2014 Campaign Donations (Amounts in USD)</h4>')
 
 		//billInfoBox Creation
 		$('#billInfoBox').removeClass("well").addClass("well");
