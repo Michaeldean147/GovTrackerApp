@@ -155,12 +155,12 @@ function legislatorWasClicked(event){
 	var legisInfoUrl =
 	"https://congress.api.sunlightfoundation.com/legislators?bioguide_id=" +
 	legisBioId + "&apikey=3c471d6192564914bfe7c7c5f5fa9242"
-	$.ajax(legisInfoUrl, {
-		dataType: 'json'
+	$.getJSON('/json_build', {
+		bio_id: legisBioId
 	}).done(function(data) {
 		$('#legisInfoBox').empty()
 		$('#billInfoBox').empty()
-		data.legisBioId = legisBioId
+		data.bio_id = legisBioId
 		addWells(data)
 	})
 }
@@ -170,10 +170,10 @@ function legislatorWasClicked(event){
 		$('#legisInfoBox').removeClass("well").addClass("well");
 		$('#legisInfoBox').append("<div id= leftPanelInfo class='col-md-6'></div>")
 		$('#legisInfoBox').append("<div id= rightPanelChart class='col-md-6'></div>")
-		$('#leftPanelInfo').append('<h4 id= heading>' + data["results"]
-		[0].first_name + " " + data["results"][0].last_name + '</h4>')
-		if (data["results"][0].chamber == "house") {
-			if (data["results"][0].gender == "M") {
+		console.log(data)
+		$('#leftPanelInfo').append('<h4 id= heading>' + data[0].first_name + ' ' + data[0].last_name + '</h4>')
+		if (data[0].chamber == "house") {
+			if (data[0].gender == "M") {
 				$('#heading').prepend('Congressman ')
 			} else {
 				$('#heading').prepend('Congresswoman ')
@@ -181,18 +181,18 @@ function legislatorWasClicked(event){
 		} else {
 			$('#heading').prepend('Senator ')
 		}
-		crpId = data["results"][0].crp_id
-		$('#leftPanelInfo').append('<p>Phone Number: ' + data["results"][0].phone + '</p>')
-		$('#leftPanelInfo').append('<p>Twitter: <a href="http://www.twitter.com/' + data["results"][0].twitter_id + '">@' + data["results"][0].twitter_id + '</a></p>')
-		$('#heading').append(' (' + data["results"][0].party + ')')
-		$('#leftPanelInfo').append('<p><img src="assets/' + data["legisBioId"] +
+		crpId = data[0].crp_id
+		$('#leftPanelInfo').append('<p>Phone Number: ' + data[0].phone_number + '</p>')
+		$('#leftPanelInfo').append('<p>Twitter: <a href="http://www.twitter.com/' + data[0].twitter + '">@' + data[0].twitter + '</a></p>')
+		$('#heading').append(' (' + data[0].party + ')')
+		$('#leftPanelInfo').append('<p><img src="assets/' + data[0].bio_id +
 		'.jpg"></p>')
 		$('#rightPanelChart').append('<h4 id= chartHeader>2012-2014 Campaign Donations (Amounts in USD)</h4>')
 
 		//billInfoBox Creation
 		$('#billInfoBox').removeClass("well").addClass("well");
 		$('#billInfoBox').append('<h4>Sponsored Bills</h4>')
-		var bioGuideId= data["results"][0].bioguide_id
+		var bioGuideId= data[0].bio_id
 		var	billInfoUrl = "https://congress.api.sunlightfoundation.com/bills/search?sponsor_id="+bioGuideId+"&apikey=3c471d6192564914bfe7c7c5f5fa9242"
 		$.ajax(billInfoUrl, {
 			dataType: 'json'

@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
   get '/api_call' => 'gov_data#api_call'
 
+  get '/json_build' => 'gov_data#json_build'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

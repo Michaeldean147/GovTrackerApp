@@ -7,7 +7,10 @@ class GovDataController < ApplicationController
   def api_call
     dataurl = params[:api_url]
     @response = RestClient.get(dataurl)
-    render json: @response    
+    render json: @response
   end
-
+  def json_build
+    a = params[:bio_id]
+    render json: Legislator.where(bio_id: a)
+  end
 end

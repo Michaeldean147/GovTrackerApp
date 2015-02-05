@@ -13,6 +13,7 @@ tweet = []
 party = []
 chamber = []
 crp = []
+gender = []
 image_files = Dir.glob('app/assets/images/*.jpg')
 image_files.each do |ifile|
   new_file = ifile.match(/[\w-]+\./).to_s
@@ -36,7 +37,7 @@ new.each do |el|
     else
      testtt <<  el["results"][0]["first_name"]
      names <<  el["results"][0]["last_name"]
-
+     gender << el["results"][0]["gender"]
      sample <<  el["results"][0]["bioguide_id"]
      phone << el["results"][0]["phone"]
       tweet << el["results"][0]["twitter_id"]
@@ -46,7 +47,7 @@ new.each do |el|
     end
  end
 @together_now = []
-@together_now = testtt.zip(sample, phone, names, tweet, chamber, crp)
+@together_now = testtt.zip(sample, phone, names, tweet, chamber, crp, party, gender)
 @together_now.each do |i|
-  Legislator.create(first_name: i[0], bio_id: i[1], phone_number: i[2], last_name: i[3], twitter: i[4], chamber: i[5], crp_id: i[6])
+  Legislator.create(first_name: i[0], bio_id: i[1], phone_number: i[2], last_name: i[3], twitter: i[4], chamber: i[5], crp_id: i[6], party: i[7], gender: i[8])
 end
