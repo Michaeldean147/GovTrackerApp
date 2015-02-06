@@ -57,8 +57,9 @@ function graphIt(orgArr, totalArr) {
 		//Boolean - Whether to animate scaling the chart from the centre
 		animateScale: false,
 		//String - A legend template
-		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>"
+		legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>",
 
+		maintainAspectRatio: false
 	};
 	data = [{
 		value: totalArr[0],
@@ -111,7 +112,7 @@ function graphIt(orgArr, totalArr) {
 		highlight: "#FF3385",
 		label: orgArr[9]
 	}];
-	$('#rightPanelChart').append('<canvas id="chart" width="300" height="300"></canvas>')
+	$('#rightPanelChart').append('<canvas style="margin-left:20px" id="chart" width="300" height="300"></canvas>')
 	ctx = $("#chart").get(0).getContext("2d");
 	myNewChart = new Chart(ctx).Pie(data, options);
 };
