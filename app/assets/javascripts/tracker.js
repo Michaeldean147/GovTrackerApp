@@ -1,33 +1,32 @@
-
 $(document).ready(function() {
 	$('form').submit(fetchLegislators);
 	$('#legisNames').on('click', 'p', legislatorWasClicked);
 })
 
-function passId(crpId) {
-	var openUrl = 'https://www.opensecrets.org/api/?method=candContrib&cid=' +
-	crpId + '&cycle=2012&apikey=dfc23d11b88b4782522cc2cd23c443b6&output=json'
-	$.ajax('/api_call', {
-		data: {
-			api_url: openUrl
-		},
-		dataType: 'json',
-	}).done(function(data) {
-		var orgArr = [];
-		var totalArr = [];
-		for (var i = 0; i < 10; i++) {
-			orgArr.push(data["response"]["contributors"]["contributor"][i][
-			"@attributes"
-			].org_name)
-			totalArr.push(parseInt(data["response"]["contributors"][
-			"contributor"
-			][i][
-			"@attributes"
-			].total))
+var passId = (function(){
+	var lastAjaxRequest;
+	return function(crpId){
+		var openUrl = 'https://www.opensecrets.org/api/?method=candContrib&cid=' +
+		crpId + '&cycle=2012&apikey=dfc23d11b88b4782522cc2cd23c443b6&output=json'
+		if(lastAjaxRequest){
+			lastAjaxRequest.abort()
 		}
-		graphIt(orgArr, totalArr)
-	})
-}
+		lastAjaxRequest = $.ajax('/api_call', {
+			data: {
+				api_url: openUrl
+			},
+			dataType: 'json',
+		}).done(function(data) {
+			var orgArr = [];
+			var totalArr = [];
+			for (var i = 0; i < 10; i++) {
+				orgArr.push(data["response"]["contributors"]["contributor"][i]["@attributes"].org_name)
+				totalArr.push(parseInt(data["response"]["contributors"]["contributor"][i]["@attributes"].total))
+			}
+			graphIt(orgArr, totalArr)
+		})
+	}
+})()
 
 function graphIt(orgArr, totalArr) {
 	options = {
@@ -119,6 +118,7 @@ function graphIt(orgArr, totalArr) {
 
 function fetchLegislators(event){
 	event.preventDefault();
+	$("#welcomeWell").remove()
 	var zipCode = $("#zipSearchBox").val();
 	var url =
 	"https://congress.api.sunlightfoundation.com/legislators/locate?zip=" +
@@ -197,14 +197,14 @@ function legislatorWasClicked(event){
 		$.ajax(billInfoUrl, {
 			dataType: 'json'
 		}).done(function(data) {
-			for(var i=0; i < 20; i++){
-			if(data["results"][i].short_title == null){
-				$('#billInfoBox').append('<p>'+ data["results"][i].official_title + '</p>')
-				$('#billInfoBox').append('<p><a href="'+ data["results"][i]["last_version"]['urls'].pdf + '">View PDF</a></p>')
+			for(var i=0; i < data["results"].length; i++){
+			if(data["results"][i]["short_title"] == null){
+				$('#billInfoBox').append('<p>'+ data["results"][i]["official_title"] + '</p>')
+				$('#billInfoBox').append('<p><a href="'+ data["results"][i]["last_version"]['urls'].pdf + '" target="_blank">View PDF</a></p>')
 			}
 			else{
-				$('#billInfoBox').append('<p>'+ data["results"][i].short_title + '</p>')
-				$('#billInfoBox').append('<p><a href="'+ data["results"][i]["last_version"]['urls'].pdf + '">View PDF</a></p>')
+				$('#billInfoBox').append('<p>'+ data["results"][i]["short_title"] + '</p>')
+				$('#billInfoBox').append('<p><a href="'+ data["results"][i]["last_version"]['urls'].pdf + '" target="_blank">View PDF</a></p>')
 			}
 			console.log(data["results"][0])
 			}
