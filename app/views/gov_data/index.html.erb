@@ -17,7 +17,7 @@
 <body>
   <div>
     <div id = "ziprow" class="row search">
-      <div id = "zipSearchRow" class="col-sm-2">
+      <div id = "zipSearchRow">
         <form role="form">
           <div class="input-group">
             <input type="text" class="form-control input-sm" id='zipSearchBox' placeholder="Enter ZipCode">
@@ -30,10 +30,16 @@
     </div>
 
       <div id="welcomeWell" class="container well">
-        <h2>Welcome To GovTracker!</h2>
+        <h1 id="hcenter" class="page-header">Welcome To GovTracker!</h1>
+        <ul>
+          <li><h2>Begin by filling in your zipcode.</h2></li>
+          <li><h2>Select the representative or senator of your choice.</h2></li>
+          <li><h2 style="padding-bottom: 35px">Information provided by the <a href="https://www.opensecrets.org/resources/create/apis.php">OpenSecrets</a> and <a href="http://tryit.sunlightfoundation.com/congress">SunlightLabs</a> API(s)</h2></li>
+      </ul>
+
       </div>
 
-      <div id="legisNames" class= "col-sm-2">
+      <div id="legisNames" class= "col-sm-1">
         <div id="Congress">
 
         </div>
@@ -46,7 +52,7 @@
 
       </div>
 
-      <div id= "billInfoBox" class="col-sm-9 col-sm-offset-2">
+      <div id= "billInfoBox" class="col-sm-9">
 
       </div>
     </div>

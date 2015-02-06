@@ -1,6 +1,5 @@
-#navbar-img{
-  padding-top: 10px !important;
-  padding-right: 20px !important;
+#navbar_img{
+  margin-left: -6px;
 }
 
 #padding-please{  padding: 5px
@@ -8,6 +7,7 @@
 
 #ziprow{
   margin-bottom: 10px;
+  margin-top: -9px;
 }
 
 #chartHeader{
@@ -17,21 +17,39 @@
 
 #Congress{
   margin-bottom: 30px;
+  margin-left: -32px;
+}
+
+#Senate{
+  margin-left: -32px;
 }
 
 #zipSearchRow{
-  margin-left: 40px;
+  margin-left: 50px;
+  width: 135px;
 }
 
 #legisNames{
   margin-left: 75px;
 }
 
+#legisInfoBox{
+  margin-left: 5px;
+}
+
 #billInfoBox{
-  margin-left: 310px;
+  margin-left: 197px;
 }
 
 #headerContainer{
   margin-left: 24px;
   margin-top: 4px;
+}
+
+#welcomeWell{
+  margin-left: 175px;
+}
+#hcenter{
+  text-align: center;
+  margin-right: 44px;
 }
