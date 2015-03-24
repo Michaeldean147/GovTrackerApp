@@ -1,7 +1,5 @@
 <nav class="navbar navbar-default">
   <!-- here's where you put the container tag -->
-  <div id = "headerContainer" class="container">
-
     <div class="navbar-header">
       <a href="/"><%= image_tag "logo.png", height: 40, :id => 'navbar_img'%></a>
     </div>
@@ -11,34 +9,33 @@
         <h4 class='pull-right'>GovTracker</h4>
       </ul>
     </div>
-  </div> <!-- close the container tag -->
 </nav> <!-- close the nav tag -->
 
 <body>
-  <div>
+  <div class="col-md-offset-4">
     <div id = "ziprow" class="row search">
       <div id = "zipSearchRow">
         <form role="form">
-          <div class="input-group">
+          <div id="searchBox" class="col-md-4">
             <input type="text" class="form-control input-sm" id='zipSearchBox' placeholder="Enter ZipCode">
-            <span class="input-group-btn">
-              <button id="zipButton"class="btn btn-default btn-sm" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-            </span>
+            <button id="zipButton"class="btn btn-default btn-sm" type="submit"><span class="glyphicon glyphicon-search"></span></button>
           </div>
         </form>
       </div>
     </div>
+  </div>
 
-      <div id="welcomeWell" class="container well">
-        <h1 id="hcenter" class="page-header">Welcome To GovTracker!</h1>
-        <ul>
-          <li><h2>Begin by filling in your zipcode.</h2></li>
-          <li><h2>Select the representative or senator of your choice.</h2></li>
-          <li><h2 style="padding-bottom: 35px">Information provided by the <a href="https://www.opensecrets.org/resources/create/apis.php">OpenSecrets</a> and <a href="http://tryit.sunlightfoundation.com/congress">SunlightLabs</a> API(s)</h2></li>
-      </ul>
+    <div class="col-md-offset-2">
+        <div id="welcomeWell" class="container well col-md-8">
+          <center><h1 class="page-header">Welcome To GovTracker!</h1></center>
+          <ul>
+            <li><h2>Begin by filling in your zipcode.</h2></li>
+            <li><h2>Select the representative or senator of your choice.</h2></li>
+            <li><h2>Information provided by the <a href="https://www.opensecrets.org/resources/create/apis.php">OpenSecrets</a> and <a href="http://tryit.sunlightfoundation.com/congress">SunlightLabs</a> API(s)</h2></li>
+        </ul>
 
-      </div>
-
+        </div>
+    </div>
       <div id="legisNames" class= "col-sm-1">
         <div id="Congress">
 

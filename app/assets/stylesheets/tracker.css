@@ -1,55 +1,8 @@
-#navbar_img{
-  margin-left: -6px;
-}
+/*#ziprow{
+  display: inline;
+}*/
 
-#padding-please{  padding: 5px
-}
-
-#ziprow{
-  margin-bottom: 10px;
-  margin-top: -9px;
-}
-
-#chartHeader{
-  margin-left: -39px;
-  margin-bottom: 28px;
-}
-
-#Congress{
-  margin-bottom: 30px;
-  margin-left: -32px;
-}
-
-#Senate{
-  margin-left: -32px;
-}
-
-#zipSearchRow{
-  margin-left: 50px;
-  width: 135px;
-}
-
-#legisNames{
-  margin-left: 75px;
-}
-
-#legisInfoBox{
-  margin-left: 5px;
-}
-
-#billInfoBox{
-  margin-left: 197px;
-}
-
-#headerContainer{
-  margin-left: 24px;
-  margin-top: 4px;
-}
-
-#welcomeWell{
-  margin-left: 175px;
-}
-#hcenter{
-  text-align: center;
-  margin-right: 44px;
+#searchBox{
+  display: -webkit-inline-box;
+  padding-bottom: 2em;
 }
